@@ -36,10 +36,17 @@ defmodule Constituent.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:postgrex, ">= 0.0.0"},
-      {:ecto, "~> 2.1"},
-      {:comeonin, "~> 4.0"},
-      {:argon2_elixir, "~> 1.2"}
+      {:postgrex, ">= 0.0.0"}, # Postgres Adapter
+      {:ecto, "~> 2.1"}, # DB Layer
+      {:comeonin, "~> 4.0"}, # Password Hashing
+      {:argon2_elixir, "~> 1.2"}, # Better Password Hashing
+      {:download, git: "git://github.com/bravely/download.git", branch: "fix-process-communication"}, # Easier Downloads
+      {:flow, "~> 0.12"}, # Easy parallel pipelines
+      {:exshape, "~> 2.0.6"}, # Shapefile Handler
+      {:geo, "~> 2.0"}, # PostGIS Functions
+      {:geo_postgis, "~> 1.0"}, # PostGIS Adapter
+      {:shape_shift, path: "/Users/pepyri/dev/shape_shift"}, # .shp read and conversion
+      {:mock, "~> 0.3"}
     ]
   end
 
