@@ -1,6 +1,8 @@
 defmodule Constituent.PoliticalEntities.UsState do
   use Ecto.Schema
-  import Ecto.Changeset
+  import Ecto.{Changeset, Query}
+  import Geo.PostGIS
+  alias Constituent.Repo
   alias Constituent.PoliticalEntities.UsState
 
 
@@ -21,5 +23,9 @@ defmodule Constituent.PoliticalEntities.UsState do
     us_state
     |> cast(attrs, [:name, :region, :fips, :usps, :division, :center, :boundaries])
     |> validate_required([:name, :region, :fips, :usps, :division, :center, :boundaries])
+  end
+
+  def performant_query(center) do
+    Repo.all(from u in Constituent.PoliticalEntities.UsState, where: fragment("(?) && (?)", u.boundaries, ^center) and st_contains(u.boundaries, ^center))
   end
 end

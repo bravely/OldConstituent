@@ -14,8 +14,10 @@ defmodule Constituent.Repo.Migrations.CreateUsStates do
       timestamps()
     end
 
-    execute "SELECT AddGeometryColumn ('us_states', 'center', 4326, 'POINT', 2)"
-    execute "SELECT AddGeometryColumn ('us_states', 'boundaries', 4326, 'MULTIPOLYGON', 2)"
+    execute "SELECT AddGeometryColumn ('us_states', 'center', 4269, 'POINT', 2)"
+    execute "SELECT AddGeometryColumn ('us_states', 'boundaries', 4269, 'MULTIPOLYGON', 2)"
+
+    create index(:us_states, [:boundaries], using: "GIST")
   end
 
   def down do
