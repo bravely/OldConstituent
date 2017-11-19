@@ -70,4 +70,70 @@ defmodule Constituent.PoliticalEntitiesTest do
       assert %Ecto.Changeset{} = PoliticalEntities.change_us_state(us_state)
     end
   end
+
+  describe "districts" do
+    alias Constituent.PoliticalEntities.District
+
+    @valid_attrs %{name: "some name", number_of_seats: 42, open_states_uid: "some open_states_uid", government: "state", chamber: "lower"}
+    @update_attrs %{name: "some updated name", number_of_seats: 43, open_states_uid: "some updated open_states_uid", government: "federal", chamber: "upper"}
+    @invalid_attrs %{name: nil, number_of_seats: nil, open_states_uid: nil, government: "nope", chamber: "nope"}
+
+    def district_fixture(attrs \\ %{}) do
+      {:ok, district} =
+        attrs
+        |> Map.merge(%{us_state_id: us_state_fixture().id})
+        |> Enum.into(@valid_attrs)
+        |> PoliticalEntities.create_district()
+
+      district
+    end
+
+    test "list_districts/0 returns all districts" do
+      district = district_fixture()
+      assert PoliticalEntities.list_districts() == [district]
+    end
+
+    test "get_district!/1 returns the district with given id" do
+      district = district_fixture()
+      assert PoliticalEntities.get_district!(district.id) == district
+    end
+
+    test "create_district/1 with valid data creates a district" do
+      valid_attrs = Map.merge(@valid_attrs, %{us_state_id: us_state_fixture().id})
+      assert {:ok, %District{} = district} = PoliticalEntities.create_district(valid_attrs)
+      assert district.name == "some name"
+      assert district.number_of_seats == 42
+      assert district.open_states_uid == "some open_states_uid"
+    end
+
+    test "create_district/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = PoliticalEntities.create_district(@invalid_attrs)
+    end
+
+    test "update_district/2 with valid data updates the district" do
+      district = district_fixture()
+      assert {:ok, district} = PoliticalEntities.update_district(district, @update_attrs)
+      assert %District{} = district
+      assert district.name == "some updated name"
+      assert district.number_of_seats == 43
+      assert district.open_states_uid == "some updated open_states_uid"
+    end
+
+    test "update_district/2 with invalid data returns error changeset" do
+      district = district_fixture()
+      assert {:error, %Ecto.Changeset{}} = PoliticalEntities.update_district(district, @invalid_attrs)
+      assert district == PoliticalEntities.get_district!(district.id)
+    end
+
+    test "delete_district/1 deletes the district" do
+      district = district_fixture()
+      assert {:ok, %District{}} = PoliticalEntities.delete_district(district)
+      assert_raise Ecto.NoResultsError, fn -> PoliticalEntities.get_district!(district.id) end
+    end
+
+    test "change_district/1 returns a district changeset" do
+      district = district_fixture()
+      assert %Ecto.Changeset{} = PoliticalEntities.change_district(district)
+    end
+  end
 end

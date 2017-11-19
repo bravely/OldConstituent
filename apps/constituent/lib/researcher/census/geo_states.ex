@@ -1,6 +1,8 @@
-defmodule Researcher.Geo do
+defmodule Researcher.Census.GeoStates do
   alias Constituent.{Repo, PoliticalEntities}
   alias Constituent.PoliticalEntities.UsState
+
+  import Researcher.Census, only: [download_directory: 1]
 
   def download_us_states do
     [path] = download_directory("geo/tiger/TIGER2017/STATE/")
@@ -13,26 +15,9 @@ defmodule Researcher.Geo do
     |> Enum.to_list
   end
 
-  def download_directory(dir) do
-    :ok = EfTP.assure_inets()
-    {:ok, conn} = EfTP.connect("ftp2.census.gov", user: "anonymous", password: "")
-    :ok = EfTP.cd(conn, dir)
-
-    {:ok, file_list} = EfTP.nlist(conn)
-
-    file_list
-    |> Enum.reject(fn(filename) -> filename == "" end)
-    |> Enum.map(fn(filename) -> # FTP doesn't like parallel downloads
-      path = "downloads/#{filename}"
-      IO.puts path
-      EfTP.download(conn, filename, path)
-      path
-    end)
-  end
-
   defp to_us_state(%{attributes: %{"STUSPS" => usps}} = us_state_row) do
-    case Repo.get_by(UsState, usps: usps) do
-      %UsState{} = us_state ->
+    case PoliticalEntities.get_us_state_by(usps: usps) do
+      %PoliticalEntities.UsState{} = us_state ->
         PoliticalEntities.update_us_state(us_state, us_state_attrs(us_state_row))
       nil ->
         PoliticalEntities.create_us_state(us_state_attrs(us_state_row))

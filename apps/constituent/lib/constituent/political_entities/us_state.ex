@@ -22,7 +22,7 @@ defmodule Constituent.PoliticalEntities.UsState do
   def changeset(%UsState{} = us_state, attrs) do
     us_state
     |> cast(attrs, [:name, :region, :fips, :usps, :division, :center, :boundaries])
-    |> validate_required([:name, :region, :fips, :usps, :division, :center, :boundaries])
+    |> validate_required([:name, :region, :fips, :usps, :division])
   end
 
   def performant_query(center) do

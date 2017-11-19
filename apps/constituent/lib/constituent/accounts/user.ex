@@ -22,10 +22,10 @@ defmodule Constituent.Accounts.User do
   @doc false
   def changeset(%User{} = user, attrs) do
     user
-    |> cast(attrs, [:email, :username, :password_hash, :zip, :state, :city, :address_1, :address_2])
+    |> cast(attrs, [:email, :username, :password, :zip, :state, :city, :address_1, :address_2])
+    |> hash_password
     |> validate_required([:email, :username, :password_hash, :zip, :state, :city, :address_1, :address_2])
     |> unique_constraint(:email)
-    |> hash_password
   end
 
   def hash_password(changeset) do
