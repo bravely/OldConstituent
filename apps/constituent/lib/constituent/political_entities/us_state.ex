@@ -15,6 +15,8 @@ defmodule Constituent.PoliticalEntities.UsState do
     field :center, Geo.Point
     field :boundaries, Geo.MultiPolygon
 
+    has_many :districts, Constituent.PoliticalEntities.District, foreign_key: :us_state_fips, references: :fips
+
     timestamps()
   end
 
@@ -23,6 +25,7 @@ defmodule Constituent.PoliticalEntities.UsState do
     us_state
     |> cast(attrs, [:name, :region, :fips, :usps, :division, :center, :boundaries])
     |> validate_required([:name, :region, :fips, :usps, :division])
+    |> unique_constraint(:fips)
   end
 
   def performant_query(center) do

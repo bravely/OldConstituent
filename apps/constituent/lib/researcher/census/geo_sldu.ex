@@ -1,8 +1,8 @@
-defmodule Researcher.Census.GeoSldl do
+defmodule Researcher.Census.GeoSldu do
   alias Constituent.PoliticalEntities
 
   def harvest do
-    ~r/tl_2017_\d+_sldl.zip/
+    ~r/tl_2017_\d+_sldu.zip/
     |> Researcher.filter_downloads
     |> Flow.from_enumerable
     |> Flow.map(fn(path) ->
@@ -19,7 +19,7 @@ defmodule Researcher.Census.GeoSldl do
     |> Flow.run
   end
 
-  defp to_district(%{attributes: %{"SLDLST" => identifier}} = district_row) do
+  defp to_district(%{attributes: %{"SLDUST" => identifier}} = district_row) do
     district_attrs = census_attrs(district_row)
     case PoliticalEntities.get_district_by(identifier: identifier) do
       %PoliticalEntities.District{} = district ->
@@ -32,7 +32,7 @@ defmodule Researcher.Census.GeoSldl do
   defp census_attrs(%{attributes: attributes, geometry: geometry}) do
     %{
       name: String.trim(attributes["NAMELSAD"]),
-      identifier: attributes["SLDLST"],
+      identifier: attributes["SLDUST"],
       center: %Geo.Point{coordinates: {
         attributes["INTPTLON"] |> String.to_float,
         attributes["INTPTLAT"] |> String.to_float
@@ -40,7 +40,7 @@ defmodule Researcher.Census.GeoSldl do
       boundaries: geometry,
       us_state_id: PoliticalEntities.get_us_state_by(fips: attributes["STATEFP"]).id,
       government: "state",
-      chamber: "lower"
+      chamber: "upper"
     }
   end
 end

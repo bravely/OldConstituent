@@ -18,6 +18,7 @@ defmodule Constituent.Repo.Migrations.CreateUsStates do
     execute "SELECT AddGeometryColumn ('us_states', 'boundaries', 4269, 'MULTIPOLYGON', 2)"
 
     create index(:us_states, [:boundaries], using: "GIST")
+    create unique_index(:us_states, [:fips])
   end
 
   def down do

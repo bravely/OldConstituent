@@ -1,8 +1,14 @@
-defmodule Researcher.Census do
-  def download_directory(dir) do
-    :ok = EfTP.assure_inets()
+defmodule Mix.Tasks.Researcher.Geo.Cd do
+  @moduledoc """
+  Harvests federal Congressional District TIGER map data.
+  """
+  use Mix.Task
+
+  @shortdoc "Downloads and harvests federal Congressional District files."
+  def run([]) do
+    :inets.start()
     {:ok, conn} = EfTP.connect("ftp2.census.gov", user: "anonymous", password: "")
-    :ok = EfTP.cd(conn, dir)
+    :ok = EfTP.cd(conn, "geo/tiger/TIGER2017/CD/")
 
     {:ok, file_list} = EfTP.nlist(conn)
 

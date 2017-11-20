@@ -1,6 +1,5 @@
 defmodule Researcher.Census.GeoStates do
-  alias Constituent.{Repo, PoliticalEntities}
-  alias Constituent.PoliticalEntities.UsState
+  alias Constituent.PoliticalEntities
 
   import Researcher.Census, only: [download_directory: 1]
 

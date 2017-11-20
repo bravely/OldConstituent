@@ -142,6 +142,10 @@ defmodule Constituent.PoliticalEntities do
   """
   def get_district!(id), do: Repo.get!(District, id)
 
+  def get_district_by(attrs) do
+    Repo.get_by(District, attrs)
+  end
+
   @doc """
   Creates a district.
 
