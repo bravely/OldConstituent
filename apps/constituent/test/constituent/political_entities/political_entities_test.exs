@@ -74,14 +74,14 @@ defmodule Constituent.PoliticalEntitiesTest do
   describe "districts" do
     alias Constituent.PoliticalEntities.District
 
-    @valid_attrs %{name: "some name", number_of_seats: 42, open_states_uid: "some open_states_uid", government: "state", chamber: "lower"}
-    @update_attrs %{name: "some updated name", number_of_seats: 43, open_states_uid: "some updated open_states_uid", government: "federal", chamber: "upper"}
+    @valid_attrs %{name: "some name", number_of_seats: 42, open_states_uid: "some open_states_uid", government: "state", chamber: "lower", identifier: "some identifier"}
+    @update_attrs %{name: "some updated name", number_of_seats: 43, open_states_uid: "some updated open_states_uid", government: "federal", chamber: "upper", identifier: "some updated identifier"}
     @invalid_attrs %{name: nil, number_of_seats: nil, open_states_uid: nil, government: "nope", chamber: "nope"}
 
     def district_fixture(attrs \\ %{}) do
       {:ok, district} =
         attrs
-        |> Map.merge(%{us_state_id: us_state_fixture().id})
+        |> Map.merge(%{us_state_fips: us_state_fixture().fips})
         |> Enum.into(@valid_attrs)
         |> PoliticalEntities.create_district()
 
@@ -99,7 +99,7 @@ defmodule Constituent.PoliticalEntitiesTest do
     end
 
     test "create_district/1 with valid data creates a district" do
-      valid_attrs = Map.merge(@valid_attrs, %{us_state_id: us_state_fixture().id})
+      valid_attrs = Map.merge(@valid_attrs, %{us_state_fips: us_state_fixture().fips})
       assert {:ok, %District{} = district} = PoliticalEntities.create_district(valid_attrs)
       assert district.name == "some name"
       assert district.number_of_seats == 42

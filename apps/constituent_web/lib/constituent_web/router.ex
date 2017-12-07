@@ -11,6 +11,7 @@ defmodule ConstituentWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug ConstituentWeb.Auth.AccessPipeline
   end
 
   scope "/", ConstituentWeb do
@@ -20,7 +21,11 @@ defmodule ConstituentWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", ConstituentWeb do
-  #   pipe_through :api
-  # end
+  scope "/api" do
+    pipe_through :api
+
+    forward "/graphiql", Absinthe.Plug.GraphiQL, schema: ConstituentWeb.Schema
+
+    forward "/", Absinthe.Plug, schema: ConstituentWeb.Schema
+  end
 end

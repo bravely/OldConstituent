@@ -5,8 +5,8 @@ defmodule Constituent.Accounts.User do
 
 
   schema "users" do
-    field :address_1, :string
-    field :address_2, :string
+    field :address_one, :string
+    field :address_two, :string
     field :city, :string
     field :email, :string
     field :password_hash, :string
@@ -22,13 +22,14 @@ defmodule Constituent.Accounts.User do
   @doc false
   def changeset(%User{} = user, attrs) do
     user
-    |> cast(attrs, [:email, :username, :password, :zip, :state, :city, :address_1, :address_2])
+    |> cast(attrs, [:email, :username, :password, :zip, :state, :city, :address_one, :address_two])
+    |> validate_length(:password, min: 6)
     |> hash_password
-    |> validate_required([:email, :username, :password_hash, :zip, :state, :city, :address_1, :address_2])
+    |> validate_required([:email, :username, :zip, :state, :city, :address_one])
     |> unique_constraint(:email)
   end
 
-  def hash_password(changeset) do
+  defp hash_password(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
         put_change(changeset, :password_hash, Comeonin.Argon2.hashpwsalt(pass))

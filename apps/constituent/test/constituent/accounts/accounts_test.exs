@@ -6,9 +6,9 @@ defmodule Constituent.AccountsTest do
   describe "users" do
     alias Constituent.Accounts.User
 
-    @valid_attrs %{address_1: "some address_1", address_2: "some address_2", city: "some city", email: "some email", password: "some password_hash", state: "some state", username: "some username", zip: "some zip"}
-    @update_attrs %{address_1: "some updated address_1", address_2: "some updated address_2", city: "some updated city", email: "some updated email", password: "some updated password_hash", state: "some updated state", username: "some updated username", zip: "some updated zip"}
-    @invalid_attrs %{address_1: nil, address_2: nil, city: nil, email: nil, state: nil, username: nil, zip: nil}
+    @valid_attrs %{address_one: "some address_one", address_two: "some address_two", city: "some city", email: "some email", password: "some password_hash", state: "some state", username: "some username", zip: "some zip"}
+    @update_attrs %{address_one: "some updated address_one", address_two: "some updated address_two", city: "some updated city", email: "some updated email", password: "some updated password_hash", state: "some updated state", username: "some updated username", zip: "some updated zip"}
+    @invalid_attrs %{address_one: nil, address_two: nil, city: nil, email: nil, state: nil, username: nil, zip: nil}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -31,8 +31,8 @@ defmodule Constituent.AccountsTest do
 
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-      assert user.address_1 == "some address_1"
-      assert user.address_2 == "some address_2"
+      assert user.address_one == "some address_one"
+      assert user.address_two == "some address_two"
       assert user.city == "some city"
       assert user.email == "some email"
       assert user.password_hash
@@ -49,8 +49,8 @@ defmodule Constituent.AccountsTest do
       user = user_fixture()
       assert {:ok, user} = Accounts.update_user(user, @update_attrs)
       assert %User{} = user
-      assert user.address_1 == "some updated address_1"
-      assert user.address_2 == "some updated address_2"
+      assert user.address_one == "some updated address_one"
+      assert user.address_two == "some updated address_two"
       assert user.city == "some updated city"
       assert user.email == "some updated email"
       assert user.password_hash

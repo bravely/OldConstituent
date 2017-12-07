@@ -23,7 +23,7 @@ defmodule Constituent.Mixfile do
   def application do
     [
       mod: {Constituent.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :ex_machina, :faker]
     ]
   end
 
@@ -46,7 +46,9 @@ defmodule Constituent.Mixfile do
       {:geo, "~> 2.0"}, # PostGIS Functions
       {:geo_postgis, "~> 1.0"}, # PostGIS Adapter
       {:shape_shift, path: "/Users/pepyri/dev/shape_shift"}, # .shp read and conversion
-      {:mock, "~> 0.3"}
+      {:mock, "~> 0.3"},
+      {:ex_machina, "~> 2.1"},
+      {:faker, "~> 0.9"}
     ]
   end
 

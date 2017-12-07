@@ -26,6 +26,18 @@ config :logger, :console,
 config :constituent_web, :generators,
   context_app: :constituent
 
+config :constituent_web, ConstituentWeb.Guardian,
+  issuer: "constituent",
+  secret_key: "jNCybpEb4+UMQGvdbFDQhUyOKEZOwiCWE8HJuLFCEceZghhVtWhDJYhDwux31jHp",
+  token_ttl: %{
+    "access" => {1, :days},
+    "refresh" => {30, :days}
+  }
+
+config :constituent_web, ConstituentWeb.Auth.AccessPipeline,
+  module: ConstituentWeb.Guardian,
+  error_handler: ConstituentWeb.Auth.ErrorHandler
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

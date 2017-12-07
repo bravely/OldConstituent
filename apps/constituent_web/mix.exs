@@ -44,7 +44,11 @@ defmodule ConstituentWeb.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
       {:constituent, in_umbrella: true},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+      {:absinthe, "~> 1.4"},
+      {:absinthe_plug, "~> 1.4"},
+      {:poison, "~> 3.1"},
+      {:guardian, "~> 1.0"}
     ]
   end
 

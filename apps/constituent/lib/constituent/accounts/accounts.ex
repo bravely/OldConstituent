@@ -37,6 +37,8 @@ defmodule Constituent.Accounts do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  def get_user(id), do: Repo.get(User, id)
+
   @doc """
   Creates a user.
 
@@ -100,5 +102,11 @@ defmodule Constituent.Accounts do
   """
   def change_user(%User{} = user) do
     User.changeset(user, %{})
+  end
+
+  def find_user_by_login(email, password) do
+    User
+    |> Repo.get_by(email: email)
+    |> Comeonin.Argon2.check_pass(password)
   end
 end

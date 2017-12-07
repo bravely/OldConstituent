@@ -20,6 +20,8 @@ defmodule ConstituentWeb.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
       import ConstituentWeb.Router.Helpers
+      import ConstituentWeb.GraphqlHelper
+      import Constituent.Factory
 
       # The default endpoint for testing
       @endpoint ConstituentWeb.Endpoint
