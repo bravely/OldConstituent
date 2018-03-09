@@ -13,6 +13,7 @@ defmodule Constituent.PoliticalEntities.District do
     field :center, Geo.Point
     field :boundaries, Geo.MultiPolygon
     field :identifier, :string
+    field :open_states_refreshed_at, :utc_datetime
 
     belongs_to :us_state, Constituent.PoliticalEntities.UsState, foreign_key: :us_state_fips, references: :fips, type: :integer
 

@@ -26,6 +26,7 @@ defmodule Constituent.Accounts.User do
     |> validate_length(:password, min: 6)
     |> hash_password
     |> validate_required([:email, :username, :zip, :state, :city, :address_one])
+    |> unsafe_validate_unique([:email], Constituent.Repo)
     |> unique_constraint(:email)
   end
 

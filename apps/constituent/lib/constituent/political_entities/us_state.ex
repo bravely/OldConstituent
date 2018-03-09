@@ -14,6 +14,7 @@ defmodule Constituent.PoliticalEntities.UsState do
     field :usps, :string
     field :center, Geo.Point
     field :boundaries, Geo.MultiPolygon
+    field :open_states_refreshed_at, :utc_datetime
 
     has_many :districts, Constituent.PoliticalEntities.District, foreign_key: :us_state_fips, references: :fips
 
