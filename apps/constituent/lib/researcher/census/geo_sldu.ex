@@ -33,11 +33,13 @@ defmodule Researcher.Census.GeoSldu do
     %{
       name: String.trim(attributes["NAMELSAD"]),
       identifier: attributes["SLDUST"],
-      center: %Geo.Point{coordinates: {
-        attributes["INTPTLON"] |> String.to_float,
-        attributes["INTPTLAT"] |> String.to_float
-      }, srid: 4269},
-      boundaries: geometry,
+      geod: %{
+        center: %Geo.Point{coordinates: {
+          attributes["INTPTLON"] |> String.to_float,
+          attributes["INTPTLAT"] |> String.to_float
+        }, srid: 4269},
+        boundaries: geometry,
+      },
       us_state_id: PoliticalEntities.get_us_state_by(fips: attributes["STATEFP"]).id,
       government: "state",
       chamber: "upper"

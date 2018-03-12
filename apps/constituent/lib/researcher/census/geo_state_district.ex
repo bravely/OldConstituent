@@ -39,11 +39,13 @@ defmodule Researcher.Census.GeoStateDistrict do
   def census_attrs(%{attributes: attributes, geometry: geometry}) do
     %{
       name: String.trim(attributes["NAMELSAD"]),
-      center: %Geo.Point{coordinates: {
-        attributes["INTPTLON"] |> String.to_float,
-        attributes["INTPTLAT"] |> String.to_float
-      }, srid: 4269},
-      boundaries: geometry,
+      geod: %{
+        center: %Geo.Point{coordinates: {
+          attributes["INTPTLON"] |> String.to_float,
+          attributes["INTPTLAT"] |> String.to_float
+        }, srid: 4269},
+        boundaries: geometry,
+      },
       us_state_fips: String.to_integer(attributes["STATEFP"]),
       government: "state",
     }

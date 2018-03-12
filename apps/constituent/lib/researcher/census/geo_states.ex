@@ -30,11 +30,13 @@ defmodule Researcher.Census.GeoStates do
       fips: attributes["STATEFP"],
       division: attributes["DIVISION"] |> String.trim |> String.to_integer,
       region: attributes["REGION"] |> String.trim |> String.to_integer,
-      center: %Geo.Point{coordinates: {
-        attributes["INTPTLON"] |> String.to_float,
-        attributes["INTPTLAT"] |> String.to_float
-      }, srid: 4269},
-      boundaries: geometry
+      geod: %{
+        center: %Geo.Point{coordinates: {
+          attributes["INTPTLON"] |> String.to_float,
+          attributes["INTPTLAT"] |> String.to_float
+        }, srid: 4269},
+        boundaries: geometry
+      }
     }
   end
 end

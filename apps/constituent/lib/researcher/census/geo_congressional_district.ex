@@ -24,10 +24,12 @@ defmodule Researcher.Census.GeoCongressionalDistrict do
     %{
       name: String.trim(attributes["NAMELSAD"]),
       identifier: attributes["CD115FP"],
-      center: %Geo.Point{coordinates: {
-        attributes["INTPTLON"] |> String.to_float,
-        attributes["INTPTLAT"] |> String.to_float
-      }, srid: 4269},
+      geod: %{
+        center: %Geo.Point{coordinates: {
+          attributes["INTPTLON"] |> String.to_float,
+          attributes["INTPTLAT"] |> String.to_float
+        }, srid: 4269},
+      },
       boundaries: geometry,
       us_state_fips: String.to_integer(attributes["STATEFP"]),
       government: "federal",

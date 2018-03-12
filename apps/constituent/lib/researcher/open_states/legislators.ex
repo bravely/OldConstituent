@@ -86,14 +86,6 @@ defmodule Researcher.OpenStates.Legislators do
   def update_district(%{name: district_name} = district, [%{"abbr" => "ma"} | _tail] = os_districts) do
     division_name = ma_district_name(district)
     Enum.filter(os_districts, fn(os_district) ->
-      # if String.match?(name, ~r/^\d/) do
-      #   starting_word =
-      #     name
-      #     |> starting_number
-      #     |> NumbersToWords.to_ordinal
-      #   ma_numbered_name(name, starting_word) == String.downcase(os_district["name"])
-      # else
-      #   name == String.downcase(os_district["name"])
       String.ends_with?(os_district["division_id"], division_name) and os_district["chamber"] == district.chamber
     end)
     |> case do

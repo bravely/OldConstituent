@@ -136,4 +136,62 @@ defmodule Constituent.PoliticalEntitiesTest do
       assert %Ecto.Changeset{} = PoliticalEntities.change_district(district)
     end
   end
+
+  describe "geods" do
+    alias Constituent.PoliticalEntities.Geod
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def geod_fixture(attrs \\ %{}) do
+      {:ok, geod} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> PoliticalEntities.create_geod()
+
+      geod
+    end
+
+    test "list_geods/0 returns all geods" do
+      geod = geod_fixture()
+      assert PoliticalEntities.list_geods() == [geod]
+    end
+
+    test "get_geod!/1 returns the geod with given id" do
+      geod = geod_fixture()
+      assert PoliticalEntities.get_geod!(geod.id) == geod
+    end
+
+    test "create_geod/1 with valid data creates a geod" do
+      assert {:ok, %Geod{} = geod} = PoliticalEntities.create_geod(@valid_attrs)
+    end
+
+    test "create_geod/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = PoliticalEntities.create_geod(@invalid_attrs)
+    end
+
+    test "update_geod/2 with valid data updates the geod" do
+      geod = geod_fixture()
+      assert {:ok, geod} = PoliticalEntities.update_geod(geod, @update_attrs)
+      assert %Geod{} = geod
+    end
+
+    test "update_geod/2 with invalid data returns error changeset" do
+      geod = geod_fixture()
+      assert {:error, %Ecto.Changeset{}} = PoliticalEntities.update_geod(geod, @invalid_attrs)
+      assert geod == PoliticalEntities.get_geod!(geod.id)
+    end
+
+    test "delete_geod/1 deletes the geod" do
+      geod = geod_fixture()
+      assert {:ok, %Geod{}} = PoliticalEntities.delete_geod(geod)
+      assert_raise Ecto.NoResultsError, fn -> PoliticalEntities.get_geod!(geod.id) end
+    end
+
+    test "change_geod/1 returns a geod changeset" do
+      geod = geod_fixture()
+      assert %Ecto.Changeset{} = PoliticalEntities.change_geod(geod)
+    end
+  end
 end
