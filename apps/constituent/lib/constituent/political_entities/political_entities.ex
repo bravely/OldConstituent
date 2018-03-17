@@ -45,7 +45,7 @@ defmodule Constituent.PoliticalEntities do
   def us_states_containing(geom) do
     # Repo.all(from u in UsState, where: st_contains(u.boundaries, ^geom))
     UsState
-    |> joins(:inner, [u], g in Geod)
+    |> join(:inner, g in Geod)
     |> where([u, g], st_contains(g.boundaries, ^geom))
     |> Repo.all
   end

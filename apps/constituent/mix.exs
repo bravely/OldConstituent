@@ -48,8 +48,7 @@ defmodule Constituent.Mixfile do
       {:shape_shift, path: "/Users/pepyri/dev/shape_shift"}, # .shp read and conversion
       {:mock, "~> 0.3"},
       {:ex_machina, "~> 2.1"},
-      {:faker, "~> 0.9"},
-      {:ordinal, "~> 0.1"}
+      {:faker, "~> 0.9"}
     ]
   end
 

@@ -137,14 +137,54 @@ defmodule Constituent.PoliticalEntitiesTest do
     end
   end
 
+  def sample_center(x \\ 1, y \\ 2), do: %Geo.Point{srid: 4269, coordinates: {x, y}}
+
+  def sample_boundaries do
+    [
+      {-73.51808, 41.666723},
+      {-73.51807099999999, 41.666782},
+      {-73.518064, 41.666843},
+      {-73.518011, 41.667572},
+      {-73.51783, 41.67012},
+      {-73.51777, 41.67097},
+      {-73.51808, 41.666723}
+    ]
+    |> sample_boundaries
+  end
+  def sample_boundaries(:alt) do
+    [
+      {-73.51808, 41.666723},
+      {-73.51777, 41.67097},
+      {-73.51783, 41.67012},
+      {-73.518011, 41.667572},
+      {-73.518064, 41.666843},
+      {-73.51807099999999, 41.666782},
+      {-73.51808, 41.666723}
+    ]
+    |> sample_boundaries
+  end
+  def sample_boundaries(list) when is_list(list) do
+    %Geo.MultiPolygon{
+      coordinates: [[list]],
+      srid: 4269
+    }
+  end
+
   describe "geods" do
     alias Constituent.PoliticalEntities.Geod
 
     @valid_attrs %{}
     @update_attrs %{}
-    @invalid_attrs %{}
+    @invalid_attrs %{boundaries: nil}
 
     def geod_fixture(attrs \\ %{}) do
+      us_state = insert(:us_state)
+      attrs = Map.merge(%{
+        us_state_usps: us_state.usps,
+        center: sample_center(),
+        boundaries: sample_boundaries()
+      }, attrs)
+
       {:ok, geod} =
         attrs
         |> Enum.into(@valid_attrs)
@@ -163,8 +203,18 @@ defmodule Constituent.PoliticalEntitiesTest do
       assert PoliticalEntities.get_geod!(geod.id) == geod
     end
 
+    @tag :focus
     test "create_geod/1 with valid data creates a geod" do
-      assert {:ok, %Geod{} = geod} = PoliticalEntities.create_geod(@valid_attrs)
+      us_state = insert(:us_state)
+      attrs = Map.merge(%{
+        us_state_usps: us_state.usps,
+        center: sample_center(),
+        boundaries: sample_boundaries()
+      }, @valid_attrs)
+      assert {:ok, %Geod{} = geod} = PoliticalEntities.create_geod(attrs)
+      assert geod.center == attrs[:center]
+      assert geod.boundaries == attrs[:boundaries]
+      assert geod.us_state_usps == attrs[:us_state_usps]
     end
 
     test "create_geod/1 with invalid data returns error changeset" do
