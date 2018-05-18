@@ -39,7 +39,20 @@ defmodule Constituent.PoliticalEntities do
   def get_us_state!(id), do: Repo.get!(UsState, id)
 
   def get_us_state_by(attrs) when is_list(attrs) do
-    Repo.get_by(UsState, attrs)
+    attrs
+    |> us_state_where
+    |> Repo.one
+  end
+
+  def get_us_state_with_geod_by(attrs) when is_list(attrs) do
+    attrs
+    |> us_state_where
+    |> preload(:geod)
+    |> Repo.one
+  end
+
+  defp us_state_where(attrs) do
+    where(UsState, ^attrs)
   end
 
   def us_states_containing(geom) do
@@ -62,9 +75,9 @@ defmodule Constituent.PoliticalEntities do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_us_state(attrs \\ %{}) do
+  def create_us_state(attrs) do
     %UsState{}
-    |> UsState.changeset(attrs)
+    |> UsState.geod_changeset(attrs)
     |> Repo.insert()
   end
 
@@ -80,6 +93,11 @@ defmodule Constituent.PoliticalEntities do
       {:error, %Ecto.Changeset{}}
 
   """
+  def update_us_state(%UsState{} = us_state, %{geod: _geod_changes} = attrs) do
+    us_state
+    |> UsState.geod_changeset(attrs)
+    |> Repo.update()
+  end
   def update_us_state(%UsState{} = us_state, attrs) do
     us_state
     |> UsState.changeset(attrs)
@@ -148,6 +166,12 @@ defmodule Constituent.PoliticalEntities do
 
   def get_district_by(attrs) do
     Repo.get_by(District, attrs)
+  end
+
+  def get_district_with_geod_by(attrs) do
+    District
+    |> preload(:geod)
+    |> Repo.get_by(attrs)
   end
 
   @doc """

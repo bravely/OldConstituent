@@ -29,8 +29,8 @@ defmodule Researcher.Census.GeoCongressionalDistrict do
           attributes["INTPTLON"] |> String.to_float,
           attributes["INTPTLAT"] |> String.to_float
         }, srid: 4269},
+        boundaries: geometry,
       },
-      boundaries: geometry,
       us_state_fips: String.to_integer(attributes["STATEFP"]),
       government: "federal",
       chamber: "lower"

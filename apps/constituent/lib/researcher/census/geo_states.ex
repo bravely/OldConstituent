@@ -5,6 +5,7 @@ defmodule Researcher.Census.GeoStates do
 
   def download_us_states do
     [path] = download_directory("geo/tiger/TIGER2017/STATE/")
+    IO.inspect path
 
     [{_name, _proj, stream}] = ShapeShift.from_zip(path, srid: 4269)
 
@@ -15,15 +16,15 @@ defmodule Researcher.Census.GeoStates do
   end
 
   defp to_us_state(%{attributes: %{"STUSPS" => usps}} = us_state_row) do
-    case PoliticalEntities.get_us_state_by(usps: usps) do
+    case PoliticalEntities.get_us_state_with_geod_by(usps: usps) do
       %PoliticalEntities.UsState{} = us_state ->
-        PoliticalEntities.update_us_state(us_state, us_state_attrs(us_state_row))
+        PoliticalEntities.update_us_state(us_state, us_state_attrs(us_state_row, us_state.geod))
       nil ->
         PoliticalEntities.create_us_state(us_state_attrs(us_state_row))
     end
   end
 
-  defp us_state_attrs(%{attributes: attributes, geometry: geometry}) do
+  defp us_state_attrs(%{attributes: attributes, geometry: geometry}, geod \\ %{}) do
     %{
       name: attributes["NAME"] |> String.trim,
       usps: attributes["STUSPS"],
@@ -31,6 +32,7 @@ defmodule Researcher.Census.GeoStates do
       division: attributes["DIVISION"] |> String.trim |> String.to_integer,
       region: attributes["REGION"] |> String.trim |> String.to_integer,
       geod: %{
+        id: Map.get(geod, :id),
         center: %Geo.Point{coordinates: {
           attributes["INTPTLON"] |> String.to_float,
           attributes["INTPTLAT"] |> String.to_float

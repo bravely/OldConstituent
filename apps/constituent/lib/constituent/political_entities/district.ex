@@ -10,8 +10,6 @@ defmodule Constituent.PoliticalEntities.District do
     field :open_states_uid, :string
     field :government, :string
     field :chamber, :string
-    field :center, Geo.Point
-    field :boundaries, Geo.MultiPolygon
     field :identifier, :string
     field :open_states_refreshed_at, :utc_datetime
 
@@ -24,7 +22,7 @@ defmodule Constituent.PoliticalEntities.District do
   @doc false
   def changeset(%District{} = district, attrs) do
     district
-    |> cast(attrs, [:name, :number_of_seats, :open_states_uid, :us_state_fips, :government, :chamber, :center, :boundaries, :identifier])
+    |> cast(attrs, [:name, :number_of_seats, :open_states_uid, :us_state_fips, :government, :chamber, :identifier])
     |> cast_assoc(:geod)
     |> validate_required([:name, :identifier, :us_state_fips, :government, :chamber])
     |> validate_inclusion(:government, ["federal", "state"])

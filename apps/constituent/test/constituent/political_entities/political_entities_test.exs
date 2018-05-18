@@ -20,12 +20,12 @@ defmodule Constituent.PoliticalEntitiesTest do
     end
 
     test "list_us_states/0 returns all us_states" do
-      us_state = us_state_fixture()
+      us_state = us_state_fixture() |> Map.get(:id) |> PoliticalEntities.get_us_state!
       assert PoliticalEntities.list_us_states() == [us_state]
     end
 
     test "get_us_state!/1 returns the us_state with given id" do
-      us_state = us_state_fixture()
+      us_state = us_state_fixture() |> Map.get(:id) |> PoliticalEntities.get_us_state!
       assert PoliticalEntities.get_us_state!(us_state.id) == us_state
     end
 
@@ -54,7 +54,7 @@ defmodule Constituent.PoliticalEntitiesTest do
     end
 
     test "update_us_state/2 with invalid data returns error changeset" do
-      us_state = us_state_fixture()
+      us_state = us_state_fixture() |> Map.get(:id) |> PoliticalEntities.get_us_state!
       assert {:error, %Ecto.Changeset{}} = PoliticalEntities.update_us_state(us_state, @invalid_attrs)
       assert us_state == PoliticalEntities.get_us_state!(us_state.id)
     end

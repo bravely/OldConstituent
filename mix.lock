@@ -15,7 +15,7 @@
   "ecto_enum": {:git, "https://github.com/gjaldon/ecto_enum.git", "970491b482671f726ff22ec1f971ba3543c029d1", []},
   "elixir_make": {:hex, :elixir_make, "0.4.0", "992f38fabe705bb45821a728f20914c554b276838433349d4f2341f7a687cddf", [], [], "hexpm"},
   "ex_machina": {:hex, :ex_machina, "2.1.0", "4874dc9c78e7cf2d429f24dc3c4005674d4e4da6a08be961ffccc08fb528e28b", [], [{:ecto, "~> 2.1", [hex: :ecto, repo: "hexpm", optional: true]}], "hexpm"},
-  "exshape": {:hex, :exshape, "2.0.6", "7ab70f353ebf6a95306dfa51c1a43304d2a70597f994c23a80874d4ad7a3b0bc", [], [{:uuid, "~> 1.1", [hex: :uuid, repo: "hexpm", optional: false]}], "hexpm"},
+  "exshape": {:hex, :exshape, "2.0.10", "f883e6d256c48d180b878dad35d4a7ba616bb40967aa6ff74cae7da44e637d71", [:mix], [{:uuid, "~> 1.1", [hex: :uuid, repo: "hexpm", optional: false]}], "hexpm"},
   "faker": {:hex, :faker, "0.9.0", "b22c55967fbd3413b9e5c121e59e75a553065587cf31e5aa2271b6fae2775cde", [], [], "hexpm"},
   "file_system": {:hex, :file_system, "0.2.1", "c4bec8f187d2aabace4beb890f0d4e468f65ca051593db768e533a274d0df587", [], [], "hexpm"},
   "flow": {:hex, :flow, "0.12.0", "32c5a5f3ff6693e004b6c17a8c64dce2f8cdaf9564912d79427176013a586ab6", [], [{:gen_stage, "~> 0.12.0", [hex: :gen_stage, repo: "hexpm", optional: false]}], "hexpm"},
