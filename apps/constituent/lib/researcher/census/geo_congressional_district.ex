@@ -24,7 +24,7 @@ defmodule Researcher.Census.GeoCongressionalDistrict do
     %{
       name: String.trim(attributes["NAMELSAD"]),
       identifier: attributes["CD115FP"],
-      geod: %{
+      area: %{
         center: %Geo.Point{coordinates: {
           attributes["INTPTLON"] |> String.to_float,
           attributes["INTPTLAT"] |> String.to_float

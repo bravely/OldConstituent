@@ -39,7 +39,7 @@ defmodule Researcher.Census.GeoStateDistrict do
   def census_attrs(%{attributes: attributes, geometry: geometry}) do
     %{
       name: String.trim(attributes["NAMELSAD"]),
-      geod: %{
+      area: %{
         center: %Geo.Point{coordinates: {
           attributes["INTPTLON"] |> String.to_float,
           attributes["INTPTLAT"] |> String.to_float

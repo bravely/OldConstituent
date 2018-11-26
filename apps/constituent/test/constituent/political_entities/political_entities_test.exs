@@ -170,14 +170,14 @@ defmodule Constituent.PoliticalEntitiesTest do
     }
   end
 
-  describe "geods" do
-    alias Constituent.PoliticalEntities.Geod
+  describe "areas" do
+    alias Constituent.PoliticalEntities.Area
 
     @valid_attrs %{}
     @update_attrs %{}
     @invalid_attrs %{boundaries: nil}
 
-    def geod_fixture(attrs \\ %{}) do
+    def area_fixture(attrs \\ %{}) do
       us_state = insert(:us_state)
       attrs = Map.merge(%{
         us_state_usps: us_state.usps,
@@ -185,63 +185,63 @@ defmodule Constituent.PoliticalEntitiesTest do
         boundaries: sample_boundaries()
       }, attrs)
 
-      {:ok, geod} =
+      {:ok, area} =
         attrs
         |> Enum.into(@valid_attrs)
-        |> PoliticalEntities.create_geod()
+        |> PoliticalEntities.create_area()
 
-      geod
+      area
     end
 
-    test "list_geods/0 returns all geods" do
-      geod = geod_fixture()
-      assert PoliticalEntities.list_geods() == [geod]
+    test "list_areas/0 returns all areas" do
+      area = area_fixture()
+      assert PoliticalEntities.list_areas() == [area]
     end
 
-    test "get_geod!/1 returns the geod with given id" do
-      geod = geod_fixture()
-      assert PoliticalEntities.get_geod!(geod.id) == geod
+    test "get_area!/1 returns the area with given id" do
+      area = area_fixture()
+      assert PoliticalEntities.get_area!(area.id) == area
     end
 
     @tag :focus
-    test "create_geod/1 with valid data creates a geod" do
+    test "create_area/1 with valid data creates a area" do
       us_state = insert(:us_state)
       attrs = Map.merge(%{
         us_state_usps: us_state.usps,
         center: sample_center(),
         boundaries: sample_boundaries()
       }, @valid_attrs)
-      assert {:ok, %Geod{} = geod} = PoliticalEntities.create_geod(attrs)
-      assert geod.center == attrs[:center]
-      assert geod.boundaries == attrs[:boundaries]
-      assert geod.us_state_usps == attrs[:us_state_usps]
+      assert {:ok, %Area{} = area} = PoliticalEntities.create_area(attrs)
+      assert area.center == attrs[:center]
+      assert area.boundaries == attrs[:boundaries]
+      assert area.us_state_usps == attrs[:us_state_usps]
     end
 
-    test "create_geod/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = PoliticalEntities.create_geod(@invalid_attrs)
+    test "create_area/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = PoliticalEntities.create_area(@invalid_attrs)
     end
 
-    test "update_geod/2 with valid data updates the geod" do
-      geod = geod_fixture()
-      assert {:ok, geod} = PoliticalEntities.update_geod(geod, @update_attrs)
-      assert %Geod{} = geod
+    test "update_area/2 with valid data updates the area" do
+      area = area_fixture()
+      assert {:ok, area} = PoliticalEntities.update_area(area, @update_attrs)
+      assert %Area{} = area
     end
 
-    test "update_geod/2 with invalid data returns error changeset" do
-      geod = geod_fixture()
-      assert {:error, %Ecto.Changeset{}} = PoliticalEntities.update_geod(geod, @invalid_attrs)
-      assert geod == PoliticalEntities.get_geod!(geod.id)
+    test "update_area/2 with invalid data returns error changeset" do
+      area = area_fixture()
+      assert {:error, %Ecto.Changeset{}} = PoliticalEntities.update_area(area, @invalid_attrs)
+      assert area == PoliticalEntities.get_area!(area.id)
     end
 
-    test "delete_geod/1 deletes the geod" do
-      geod = geod_fixture()
-      assert {:ok, %Geod{}} = PoliticalEntities.delete_geod(geod)
-      assert_raise Ecto.NoResultsError, fn -> PoliticalEntities.get_geod!(geod.id) end
+    test "delete_area/1 deletes the area" do
+      area = area_fixture()
+      assert {:ok, %Area{}} = PoliticalEntities.delete_area(area)
+      assert_raise Ecto.NoResultsError, fn -> PoliticalEntities.get_area!(area.id) end
     end
 
-    test "change_geod/1 returns a geod changeset" do
-      geod = geod_fixture()
-      assert %Ecto.Changeset{} = PoliticalEntities.change_geod(geod)
+    test "change_area/1 returns a area changeset" do
+      area = area_fixture()
+      assert %Ecto.Changeset{} = PoliticalEntities.change_area(area)
     end
   end
 end

@@ -6,3 +6,4 @@ erl_crash.dump
 .DS_Store
 /downloads
 esriprj2standards.py
+.elixir_ls/

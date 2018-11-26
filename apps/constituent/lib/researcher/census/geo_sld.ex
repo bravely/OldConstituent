@@ -30,18 +30,18 @@ defmodule Researcher.Census.GeoSld do
   defp to_district(district_row, chamber) do
     case get_district_by_census_attrs(district_row, chamber) do
       %PoliticalEntities.District{} = district ->
-        PoliticalEntities.update_district(district, census_attrs(district_row, chamber, district.geod))
+        PoliticalEntities.update_district(district, census_attrs(district_row, chamber, district.area))
       nil ->
         PoliticalEntities.create_district(census_attrs(district_row, chamber))
     end
   end
 
-  defp census_attrs(%{attributes: attributes, geometry: geometry}, chamber, geod \\ %{}) do
+  defp census_attrs(%{attributes: attributes, geometry: geometry}, chamber, area \\ %{}) do
     %{
       name: String.trim(attributes["NAMELSAD"]),
       identifier: attributes[identifier_field(chamber)],
-      geod: %{
-        id: Map.get(geod, :id),
+      area: %{
+        id: Map.get(area, :id),
         center: %Geo.Point{coordinates: {
           attributes["INTPTLON"] |> String.to_float,
           attributes["INTPTLAT"] |> String.to_float
@@ -64,8 +64,8 @@ defmodule Researcher.Census.GeoSld do
   def get_district_by_census_attrs(census_row, chamber) do
     census_row
     |> census_attrs(chamber)
-    |> Map.drop([:geod])
+    |> Map.drop([:area])
     |> Enum.into([])
-    |> PoliticalEntities.get_district_with_geod_by
+    |> PoliticalEntities.get_district_with_area_by
   end
 end

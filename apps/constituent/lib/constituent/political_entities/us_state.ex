@@ -15,7 +15,7 @@ defmodule Constituent.PoliticalEntities.UsState do
     field :open_states_refreshed_at, :utc_datetime
 
     has_many :districts, Constituent.PoliticalEntities.District, foreign_key: :us_state_fips, references: :fips
-    has_one :geod, Constituent.PoliticalEntities.Geod, foreign_key: :us_state_usps, references: :usps
+    has_one :area, Constituent.PoliticalEntities.Area, foreign_key: :us_state_usps, references: :usps
 
     timestamps()
   end
@@ -31,11 +31,11 @@ defmodule Constituent.PoliticalEntities.UsState do
     |> unique_constraint(:usps)
   end
 
-  def geod_changeset(%UsState{} = us_state, attrs) do
+  def area_changeset(%UsState{} = us_state, attrs) do
     us_state
-    |> Repo.preload(:geod)
+    |> Repo.preload(:area)
     |> changeset(attrs)
-    |> cast_assoc(:geod)
+    |> cast_assoc(:area)
   end
 
   def performant_query(center) do
