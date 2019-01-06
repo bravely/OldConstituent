@@ -2,13 +2,12 @@ defmodule Researcher.OpenStates.Legislators do
   import Ecto.Query
 
   alias Researcher.OpenStates
+
   alias Constituent.{
     Repo,
-    PoliticalEntities,
     PoliticalEntities.UsState,
     PoliticalEntities.District
   }
-
 
   def update_districts do
     # PoliticalEntities.list_us_states()
@@ -16,6 +15,7 @@ defmodule Researcher.OpenStates.Legislators do
     Repo.all(UsState)
     |> Enum.flat_map(&update_districts/1)
     |> Enum.map(&Repo.update/1)
+
     # |> Repo.insert_all(on_conflict: :replace_all)
   end
 
@@ -25,6 +25,118 @@ defmodule Researcher.OpenStates.Legislators do
     us_state
     |> relevant_districts_for_state
     |> Enum.map(&update_district(&1, os_districts))
+  end
+
+  def update_district(district, [%{"abbr" => "nh"} | _tail] = os_districts) do
+    Enum.filter(os_districts, fn %{"name" => os_name, "chamber" => os_chamber} ->
+      os_name = String.downcase(os_name)
+
+      Enum.all?(String.split(os_name), fn word ->
+        if String.match?(word, ~r/^\d+$/) do
+          String.match?(district.name, ~r/ #{word}$/)
+        else
+          String.contains?(String.downcase(district.name), word)
+        end and os_chamber == district.chamber
+      end)
+    end)
+    |> case do
+      [] ->
+        require IEx
+        IEx.pry()
+
+      other ->
+        other
+    end
+    |> district_changeset(district)
+  end
+
+  def update_district(district, [%{"abbr" => "vt"} | _tail] = os_districts) do
+    Enum.filter(os_districts, fn os_district ->
+      compare_vt_names(district, os_district)
+    end)
+    |> case do
+      [] ->
+        require IEx
+        IEx.pry()
+
+      other ->
+        other
+    end
+    |> district_changeset(district)
+  end
+
+  def update_district(district, [%{"abbr" => "pr"} | _tail] = os_districts) do
+    Enum.filter(os_districts, fn %{"name" => os_name} ->
+      district_name = district.name |> String.split() |> List.last()
+
+      district_name == os_name
+    end)
+    |> case do
+      [] ->
+        require IEx
+        IEx.pry()
+
+      other ->
+        other
+    end
+    |> district_changeset(district)
+  end
+
+  # USE THE FUCKING DIVISION ID
+  def update_district(
+        %{name: district_name} = district,
+        [%{"abbr" => "ma"} | _tail] = os_districts
+      ) do
+    division_name = ma_district_name(district)
+
+    Enum.filter(os_districts, fn os_district ->
+      String.ends_with?(os_district["division_id"], division_name) and
+        os_district["chamber"] == district.chamber
+    end)
+    |> case do
+      [] ->
+        require IEx
+        IEx.pry()
+
+      other ->
+        other
+    end
+    |> district_changeset(district)
+  end
+
+  def update_district(
+        %{name: district_name} = district,
+        [%{"abbr" => "dc"} | _tail] = os_districts
+      ) do
+    Enum.filter(os_districts, fn os_district ->
+      district_name == os_district["name"] and os_district["chamber"] == district.chamber
+    end)
+    |> case do
+      [] ->
+        require IEx
+        IEx.pry()
+
+      other ->
+        other
+    end
+    |> district_changeset(district)
+  end
+
+  def update_district(district, os_districts) do
+    os_districts
+    |> Enum.filter(fn os_district ->
+      padded_identifier_matches(os_district, district) and
+        os_district["chamber"] == district.chamber
+    end)
+    |> case do
+      [] ->
+        require IEx
+        IEx.pry()
+
+      other ->
+        other
+    end
+    |> district_changeset(district)
   end
 
   def relevant_districts_for_state(us_state) do
@@ -40,112 +152,34 @@ defmodule Researcher.OpenStates.Legislators do
     resp.body
   end
 
-  def update_district(district, [%{"abbr" => "nh"} | _tail] = os_districts) do
-    Enum.filter(os_districts, fn(%{"name" => os_name, "chamber" => os_chamber}) ->
-      os_name = String.downcase(os_name)
-      Enum.all?(String.split(os_name), fn(word) ->
-        if String.match?(word, ~r/^\d+$/) do
-          String.match?(district.name, ~r/ #{word}$/)
-        else
-          String.contains?(String.downcase(district.name), word)
-        end and os_chamber == district.chamber
-      end)
-    end)
-    |> case do
-      [] -> require IEx; IEx.pry
-      other -> other
-    end
-    |> district_changeset(district)
-  end
-
-  def update_district(district, [%{"abbr" => "vt"} | _tail] = os_districts) do
-    Enum.filter(os_districts, fn(os_district) ->
-      compare_vt_names(district, os_district)
-    end)
-    |> case do
-      [] -> require IEx; IEx.pry
-      other -> other
-    end
-    |> district_changeset(district)
-  end
-
-  def update_district(district, [%{"abbr" => "pr"} | _tail] = os_districts) do
-    Enum.filter(os_districts, fn(%{"name" => os_name}) ->
-      district_name = district.name |> String.split |> List.last
-
-      district_name == os_name
-    end)
-    |> case do
-      [] -> require IEx; IEx.pry
-      other -> other
-    end
-    |> district_changeset(district)
-  end
-
-  # USE THE FUCKING DIVISION ID
-  def update_district(%{name: district_name} = district, [%{"abbr" => "ma"} | _tail] = os_districts) do
-    division_name = ma_district_name(district)
-    Enum.filter(os_districts, fn(os_district) ->
-      String.ends_with?(os_district["division_id"], division_name) and os_district["chamber"] == district.chamber
-    end)
-    |> case do
-      [] -> require IEx; IEx.pry
-      other -> other
-    end
-    |> district_changeset(district)
-  end
-
-  def update_district(%{name: district_name} = district, [%{"abbr" => "dc"} | _tail] = os_districts) do
-    Enum.filter(os_districts, fn(os_district) ->
-      district_name == os_district["name"] and os_district["chamber"] == district.chamber
-    end)
-    |> case do
-      [] -> require IEx; IEx.pry
-      other -> other
-    end
-    |> district_changeset(district)
-  end
-
   def ma_numbered_name(district_name, starting_word) do
     district_name
-    |> String.split
+    |> String.split()
     |> Enum.drop(1)
     |> List.insert_at(0, starting_word)
     |> Enum.join(" ")
-    |> String.downcase
-  end
-
-  def update_district(district, os_districts) do
-    os_districts
-    |> Enum.filter(fn os_district ->
-      padded_identifier_matches(os_district, district) and os_district["chamber"] == district.chamber
-    end)
-    |> case do
-      [] -> require IEx; IEx.pry
-      other -> other
-    end
-    |> district_changeset(district)
+    |> String.downcase()
   end
 
   def starting_number(name) do
     name
-    |> String.split
-    |> List.first
+    |> String.split()
+    |> List.first()
     |> String.split("")
-    |> Enum.reverse
+    |> Enum.reverse()
     |> Enum.drop(3)
-    |> Enum.reverse
-    |> Enum.join
-    |> String.to_integer
+    |> Enum.reverse()
+    |> Enum.join()
+    |> String.to_integer()
   end
 
   def compare_vt_names(%{name: name}, %{"name" => os_name}) do
     district_name =
       name
       |> comparable_words
-      |> Enum.reverse
+      |> Enum.reverse()
       |> Enum.drop(2)
-      |> Enum.reverse
+      |> Enum.reverse()
 
     openstates_name = comparable_words(os_name) ++ ["State"]
 
@@ -154,7 +188,7 @@ defmodule Researcher.OpenStates.Legislators do
 
   def comparable_words(name) do
     name
-    |> String.split
+    |> String.split()
     |> Enum.flat_map(&String.split(&1, "-"))
   end
 
@@ -162,12 +196,12 @@ defmodule Researcher.OpenStates.Legislators do
     name
     |> String.replace("&", "and")
     |> String.replace(",", "")
-    |> String.downcase
-    |> String.split
+    |> String.downcase()
+    |> String.split()
     |> replace_written_ordinal
-    |> Enum.reverse
+    |> Enum.reverse()
     |> Enum.drop(1)
-    |> Enum.reverse
+    |> Enum.reverse()
     |> Enum.join("_")
     |> prepend_division_string(chamber)
   end
