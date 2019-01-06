@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Researcher.Geo.State do
   """
   use Mix.Task
 
-  @shortdoc "Downloads and harvests the Us State shapefile."
+  @shortdoc "Downloads the Us State shapefile."
   def run([]) do
     :inets.start()
     {:ok, conn} = EfTP.connect("ftp2.census.gov", user: "anonymous", password: "")
