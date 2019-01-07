@@ -7,5 +7,4 @@ config :constituent, Constituent.Repo,
   password: "postgres",
   database: "constituent_dev",
   hostname: "localhost",
-  pool_size: 10,
-  types: Constituent.PostgresTypes
+  pool_size: 10

@@ -5,14 +5,13 @@ defmodule Researcher.OpenStates.Legislators do
 
   alias Constituent.{
     Repo,
+    PoliticalEntities,
     PoliticalEntities.UsState,
     PoliticalEntities.District
   }
 
   def update_districts do
-    # PoliticalEntities.list_us_states()
-    # |> Flow.from_enumerable
-    Repo.all(UsState)
+    PoliticalEntities.list_us_states()
     |> Flow.from_enumerable()
     |> Flow.flat_map(&update_districts/1)
     |> Flow.map(&Repo.update/1)
@@ -33,7 +32,7 @@ defmodule Researcher.OpenStates.Legislators do
     |> Ecto.assoc(:districts)
     |> where([d], d.government == "state")
     |> where([d], not like(d.identifier, "ZZ%"))
-    |> Repo.all(timeout: :infinity)
+    |> Repo.all()
   end
 
   def match_os_district(district, os_districts) do

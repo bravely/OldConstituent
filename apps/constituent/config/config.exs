@@ -2,4 +2,6 @@ use Mix.Config
 
 config :constituent, ecto_repos: [Constituent.Repo]
 
-import_config "#{Mix.env}.exs"
+config :constituent, Constituent.Repo, types: Constituent.PostgresTypes
+
+import_config "#{Mix.env()}.exs"

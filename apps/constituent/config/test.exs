@@ -7,8 +7,7 @@ config :constituent, Constituent.Repo,
   password: "postgres",
   database: "constituent_test",
   hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox,
-  types: Constituent.PostgresTypes
+  pool: Ecto.Adapters.SQL.Sandbox
 
 config :argon2_elixir,
   t_cost: 2,

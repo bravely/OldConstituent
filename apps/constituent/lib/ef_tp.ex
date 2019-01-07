@@ -52,6 +52,13 @@ defmodule EfTP do
     end
   end
 
+  def cd!(conn, path) do
+    case cd(conn, path) do
+      {:error, error} -> raise error
+      other -> other
+    end
+  end
+
   def pwd(pid) do
     with {:ok, path} <- :ftp.pwd(pid) do
       {:ok, to_string(path)}
