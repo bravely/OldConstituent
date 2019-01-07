@@ -13,10 +13,10 @@ defmodule Researcher.OpenStates.Legislators do
     # PoliticalEntities.list_us_states()
     # |> Flow.from_enumerable
     Repo.all(UsState)
-    |> Enum.flat_map(&update_districts/1)
-    |> Enum.map(&Repo.update/1)
-
-    # |> Repo.insert_all(on_conflict: :replace_all)
+    |> Flow.from_enumerable()
+    |> Flow.flat_map(&update_districts/1)
+    |> Flow.map(&Repo.update/1)
+    |> Enum.to_list()
   end
 
   def update_districts(%UsState{usps: usps} = us_state) do
@@ -24,11 +24,24 @@ defmodule Researcher.OpenStates.Legislators do
 
     us_state
     |> relevant_districts_for_state
-    |> Enum.map(&update_district(&1, os_districts))
+    |> Enum.map(&find_os_district(&1, os_districts))
+    |> Enum.map(&district_changeset/1)
   end
 
-  def update_district(district, [%{"abbr" => "nh"} | _tail] = os_districts) do
-    Enum.filter(os_districts, fn %{"name" => os_name, "chamber" => os_chamber} ->
+  def relevant_districts_for_state(us_state) do
+    us_state
+    |> Ecto.assoc(:districts)
+    |> where([d], d.government == "state")
+    |> where([d], not like(d.identifier, "ZZ%"))
+    |> Repo.all(timeout: :infinity)
+  end
+
+  def match_os_district(district, os_districts) do
+    {district, find_os_district(district, os_districts)}
+  end
+
+  def find_os_district(district, [%{"abbr" => "nh"} | _tail] = os_districts) do
+    Enum.find(os_districts, fn %{"name" => os_name, "chamber" => os_chamber} ->
       os_name = String.downcase(os_name)
 
       Enum.all?(String.split(os_name), fn word ->
@@ -39,112 +52,50 @@ defmodule Researcher.OpenStates.Legislators do
         end and os_chamber == district.chamber
       end)
     end)
-    |> case do
-      [] ->
-        require IEx
-        IEx.pry()
-
-      other ->
-        other
-    end
-    |> district_changeset(district)
   end
 
-  def update_district(district, [%{"abbr" => "vt"} | _tail] = os_districts) do
-    Enum.filter(os_districts, fn os_district ->
+  def find_os_district(district, [%{"abbr" => "vt"} | _tail] = os_districts) do
+    Enum.find(os_districts, fn os_district ->
       compare_vt_names(district, os_district)
     end)
-    |> case do
-      [] ->
-        require IEx
-        IEx.pry()
-
-      other ->
-        other
-    end
-    |> district_changeset(district)
   end
 
-  def update_district(district, [%{"abbr" => "pr"} | _tail] = os_districts) do
-    Enum.filter(os_districts, fn %{"name" => os_name} ->
+  def find_os_district(district, [%{"abbr" => "pr"} | _tail] = os_districts) do
+    Enum.find(os_districts, fn %{"name" => os_name} ->
       district_name = district.name |> String.split() |> List.last()
 
       district_name == os_name
     end)
-    |> case do
-      [] ->
-        require IEx
-        IEx.pry()
-
-      other ->
-        other
-    end
-    |> district_changeset(district)
   end
 
   # USE THE FUCKING DIVISION ID
-  def update_district(
-        %{name: district_name} = district,
+  def find_os_district(
+        district,
         [%{"abbr" => "ma"} | _tail] = os_districts
       ) do
     division_name = ma_district_name(district)
 
-    Enum.filter(os_districts, fn os_district ->
+    Enum.find(os_districts, fn os_district ->
       String.ends_with?(os_district["division_id"], division_name) and
         os_district["chamber"] == district.chamber
     end)
-    |> case do
-      [] ->
-        require IEx
-        IEx.pry()
-
-      other ->
-        other
-    end
-    |> district_changeset(district)
   end
 
-  def update_district(
+  def find_os_district(
         %{name: district_name} = district,
         [%{"abbr" => "dc"} | _tail] = os_districts
       ) do
-    Enum.filter(os_districts, fn os_district ->
+    Enum.find(os_districts, fn os_district ->
       district_name == os_district["name"] and os_district["chamber"] == district.chamber
     end)
-    |> case do
-      [] ->
-        require IEx
-        IEx.pry()
-
-      other ->
-        other
-    end
-    |> district_changeset(district)
   end
 
-  def update_district(district, os_districts) do
+  def find_os_district(district, os_districts) do
     os_districts
-    |> Enum.filter(fn os_district ->
+    |> Enum.find(fn os_district ->
       padded_identifier_matches(os_district, district) and
         os_district["chamber"] == district.chamber
     end)
-    |> case do
-      [] ->
-        require IEx
-        IEx.pry()
-
-      other ->
-        other
-    end
-    |> district_changeset(district)
-  end
-
-  def relevant_districts_for_state(us_state) do
-    us_state
-    |> Ecto.assoc(:districts)
-    |> where([d], d.government == "state")
-    |> where([d], not like(d.identifier, "ZZ%"))
-    |> Repo.all(timeout: :infinity)
   end
 
   defp open_states_districts_for(state_abbr) do
@@ -206,17 +157,22 @@ defmodule Researcher.OpenStates.Legislators do
     |> prepend_division_string(chamber)
   end
 
-  def replace_written_ordinal(["first" | other]), do: ["1st" | other]
-  def replace_written_ordinal(["second" | other]), do: ["2nd" | other]
-  def replace_written_ordinal(["third" | other]), do: ["3rd" | other]
-  def replace_written_ordinal(["fourth" | other]), do: ["4th" | other]
-  def replace_written_ordinal(["fifth" | other]), do: ["5th" | other]
-  def replace_written_ordinal(list), do: list
+  defp replace_written_ordinal(["first" | other]), do: ["1st" | other]
+  defp replace_written_ordinal(["second" | other]), do: ["2nd" | other]
+  defp replace_written_ordinal(["third" | other]), do: ["3rd" | other]
+  defp replace_written_ordinal(["fourth" | other]), do: ["4th" | other]
+  defp replace_written_ordinal(["fifth" | other]), do: ["5th" | other]
+  defp replace_written_ordinal(list), do: list
 
-  def prepend_division_string(name, "lower"), do: "sldl:" <> name
-  def prepend_division_string(name, "upper"), do: "sldu:" <> name
+  defp prepend_division_string(name, "lower"), do: "sldl:" <> name
+  defp prepend_division_string(name, "upper"), do: "sldu:" <> name
 
-  def district_changeset([matching_os_district], district) do
+  defp district_changeset({district, nil}) do
+    require IEx
+    IEx.pry()
+  end
+
+  defp district_changeset({district, matching_os_district}) do
     District.changeset(district, district_mapping(matching_os_district))
   end
 

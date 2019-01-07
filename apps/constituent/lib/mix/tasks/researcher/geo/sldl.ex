@@ -6,19 +6,9 @@ defmodule Mix.Tasks.Researcher.Geo.Sldl do
 
   @shortdoc "Downloads State Lower House district files."
   def run([]) do
-    :inets.start()
-    {:ok, conn} = EfTP.connect("ftp2.census.gov", user: "anonymous", password: "")
-    :ok = EfTP.cd(conn, "geo/tiger/TIGER2017/SLDL/")
-
-    {:ok, file_list} = EfTP.nlist(conn)
-
-    file_list
-    |> Enum.reject(fn(filename) -> filename == "" end)
-    |> Enum.map(fn(filename) -> # FTP doesn't like parallel downloads
-      path = "downloads/#{filename}"
-      IO.puts path
-      EfTP.download(conn, filename, path)
-      path
-    end)
+    "ftp2.census.gov"
+    |> EfTP.connect(user: "anonymous", password: "")
+    |> EfTP.cd("geo/tiger/TIGER2017/SLDL/")
+    |> EfTP.download_directory("downloads", log: true)
   end
 end

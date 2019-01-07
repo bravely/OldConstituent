@@ -10,8 +10,8 @@ defmodule Constituent.Mixfile do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.5",
-      elixirc_paths: elixirc_paths(Mix.env),
-      start_permanent: Mix.env == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
+      start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
     ]
@@ -23,29 +23,40 @@ defmodule Constituent.Mixfile do
   def application do
     [
       mod: {Constituent.Application, []},
-      extra_applications: [:logger, :runtime_tools, :ex_machina, :faker]
+      extra_applications: [:logger, :runtime_tools, :inets]
     ]
   end
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:postgrex, ">= 0.0.0"}, # Postgres Adapter
-      {:ecto, "~> 2.1"}, # DB Layer
-      {:comeonin, "~> 4.0"}, # Password Hashing
-      {:argon2_elixir, "~> 1.2"}, # Better Password Hashing
-      {:download, git: "git://github.com/bravely/download.git", branch: "fix-process-communication"}, # Easier Downloads
-      {:flow, "~> 0.12"}, # Easy parallel pipelines
-      {:exshape, "~> 2.0.10"}, # Shapefile Handler
-      {:geo, "~> 2.0"}, # PostGIS Functions
-      {:geo_postgis, "~> 1.0"}, # PostGIS Adapter
-      {:shape_shift, path: "/Users/pepyri/dev/shape_shift"}, # .shp read and conversion
+      # Postgres Adapter
+      {:postgrex, ">= 0.0.0"},
+      # DB Layer
+      {:ecto, "~> 2.1"},
+      # Password Hashing
+      {:comeonin, "~> 4.0"},
+      # Better Password Hashing
+      {:argon2_elixir, "~> 1.2"},
+      # Easier Downloads
+      {:download,
+       git: "git://github.com/bravely/download.git", branch: "fix-process-communication"},
+      # Easy parallel pipelines
+      {:flow, "~> 0.12"},
+      # Shapefile Handler
+      {:exshape, "~> 2.0.10"},
+      # PostGIS Functions
+      {:geo, "~> 2.0"},
+      # PostGIS Adapter
+      {:geo_postgis, "~> 1.0"},
+      # .shp read and conversion
+      {:shape_shift, path: "/Users/pepyri/dev/shape_shift"},
       {:mock, "~> 0.3"},
       {:ex_machina, "~> 2.1"},
       {:faker, "~> 0.9"}
