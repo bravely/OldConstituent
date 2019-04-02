@@ -48,14 +48,14 @@ defmodule EfTP do
   def cd(conn, path) do
     case :ftp.cd(conn, to_charlist(path)) do
       :ok -> conn
-      other -> other
+      {:error, _reason} = other -> other
     end
   end
 
   def cd!(conn, path) do
     case cd(conn, path) do
+      ^conn -> conn
       {:error, error} -> raise error
-      other -> other
     end
   end
 

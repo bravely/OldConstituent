@@ -27,14 +27,11 @@ defmodule Researcher.OpenStates do
     "https://openstates.org/api/v1/" <> url
   end
 
-  defp process_request_headers(headers) do
+  def process_request_headers(headers) do
     [{"X-API-KEY", System.get_env("OPEN_STATES_API_KEY")} | headers]
   end
 
-  defp process_response_body(body) do
-    case Poison.decode(body) do
-      {:ok, decoded_body} -> decoded_body
-      {:error, _} -> body
-    end
+  def process_response_body(body) do
+    Poison.decode!(body)
   end
 end

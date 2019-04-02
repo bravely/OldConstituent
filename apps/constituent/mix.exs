@@ -59,7 +59,9 @@ defmodule Constituent.Mixfile do
       {:shape_shift, path: "/Users/pepyri/dev/shape_shift"},
       {:mock, "~> 0.3"},
       {:ex_machina, "~> 2.1"},
-      {:faker, "~> 0.9"}
+      {:faker, "~> 0.9"},
+      {:httpoison, "~> 1.0", override: true},
+      {:neuron, "~> 1.1"}
     ]
   end
 

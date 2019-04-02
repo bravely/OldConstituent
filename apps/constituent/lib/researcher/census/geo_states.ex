@@ -1,11 +1,10 @@
 defmodule Researcher.Census.GeoStates do
   alias Constituent.PoliticalEntities
 
-  import Researcher.Census, only: [download_directory: 1]
+  alias Researcher.Census
 
   def download_us_states do
-    [path] = download_directory("geo/tiger/TIGER2017/STATE/")
-    IO.inspect path
+    [path] = Census.download_directory("geo/tiger/TIGER2017/STATE/")
 
     [{_name, _proj, stream}] = ShapeShift.from_zip(path, srid: 4269)
 
