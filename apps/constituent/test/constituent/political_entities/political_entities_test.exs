@@ -137,53 +137,35 @@ defmodule Constituent.PoliticalEntitiesTest do
     end
   end
 
-  def sample_center(x \\ 1, y \\ 2), do: %Geo.Point{srid: 4269, coordinates: {x, y}}
-
-  def sample_boundaries do
-    [
-      {-73.51808, 41.666723},
-      {-73.51807099999999, 41.666782},
-      {-73.518064, 41.666843},
-      {-73.518011, 41.667572},
-      {-73.51783, 41.67012},
-      {-73.51777, 41.67097},
-      {-73.51808, 41.666723}
-    ]
-    |> sample_boundaries
-  end
-  def sample_boundaries(:alt) do
-    [
-      {-73.51808, 41.666723},
-      {-73.51777, 41.67097},
-      {-73.51783, 41.67012},
-      {-73.518011, 41.667572},
-      {-73.518064, 41.666843},
-      {-73.51807099999999, 41.666782},
-      {-73.51808, 41.666723}
-    ]
-    |> sample_boundaries
-  end
-  def sample_boundaries(list) when is_list(list) do
-    %Geo.MultiPolygon{
-      coordinates: [[list]],
-      srid: 4269
-    }
-  end
-
   describe "areas" do
     alias Constituent.PoliticalEntities.Area
 
-    @valid_attrs %{}
-    @update_attrs %{}
-    @invalid_attrs %{boundaries: nil}
+    @valid_attrs %{
+      name: "Idaho",
+      identifier: "ID",
+      classification: "US State",
+      codes: %{
+        "USPS" => "ID",
+        "FIPS" => 16,
+        "region" => 4,
+        "division" => 8
+      }
+    }
+    @update_attrs %{
+      name: "Washington",
+      identifier: "WA",
+      classification: "US State",
+      codes: %{
+        "USPS" => "WA",
+        "FIPS" => 53,
+        "region" => 4,
+        "division" => 9
+      }
+    }
+    @invalid_attrs %{name: nil, identifier: nil, classification: nil, codes: nil}
 
     def area_fixture(attrs \\ %{}) do
-      us_state = insert(:us_state)
-      attrs = Map.merge(%{
-        us_state_usps: us_state.usps,
-        center: sample_center(),
-        boundaries: sample_boundaries()
-      }, attrs)
+      attrs = Map.merge(@valid_attrs, attrs)
 
       {:ok, area} =
         attrs
@@ -203,18 +185,12 @@ defmodule Constituent.PoliticalEntitiesTest do
       assert PoliticalEntities.get_area!(area.id) == area
     end
 
-    @tag :focus
     test "create_area/1 with valid data creates a area" do
-      us_state = insert(:us_state)
-      attrs = Map.merge(%{
-        us_state_usps: us_state.usps,
-        center: sample_center(),
-        boundaries: sample_boundaries()
-      }, @valid_attrs)
-      assert {:ok, %Area{} = area} = PoliticalEntities.create_area(attrs)
-      assert area.center == attrs[:center]
-      assert area.boundaries == attrs[:boundaries]
-      assert area.us_state_usps == attrs[:us_state_usps]
+      assert {:ok, %Area{} = area} = PoliticalEntities.create_area(@valid_attrs)
+      assert area.name == @valid_attrs.name
+      assert area.identifier == @valid_attrs.identifier
+      assert area.classification == @valid_attrs.classification
+      assert area.codes == @valid_attrs.codes
     end
 
     test "create_area/1 with invalid data returns error changeset" do
@@ -242,6 +218,93 @@ defmodule Constituent.PoliticalEntitiesTest do
     test "change_area/1 returns a area changeset" do
       area = area_fixture()
       assert %Ecto.Changeset{} = PoliticalEntities.change_area(area)
+    end
+
+    test "find_area_by_name/1 returns the area with the given name" do
+      area = area_fixture()
+      assert PoliticalEntities.find_area_by_name(area.name) == area
+    end
+  end
+
+  describe "geomes" do
+    alias Constituent.PoliticalEntities.Geome
+
+    @valid_attrs %{boundaries: %Geo.MultiPolygon{srid: 4269, coordinates: [[
+      [
+        {-73.51808, 41.666723},
+        {-73.51807099999999, 41.666782},
+        {-73.518064, 41.666843},
+        {-73.518011, 41.667572},
+        {-73.51783, 41.67012},
+        {-73.51777, 41.67097},
+        {-73.51808, 41.666723}
+      ]
+    ]]}}
+    @update_attrs %{boundaries: %Geo.MultiPolygon{srid: 4269, coordinates: [[
+      [
+        {-73.51808, 41.666723},
+        {-73.51777, 41.67097},
+        {-73.51783, 41.67012},
+        {-73.518011, 41.667572},
+        {-73.518064, 41.666843},
+        {-73.51807099999999, 41.666782},
+        {-73.51808, 41.666723}
+      ]
+    ]]}}
+    @invalid_attrs %{boundaries: nil}
+
+    def geome_fixture(attrs \\ %{}) do
+      area = insert(:area)
+      attrs = Map.merge(%{area_id: area.id}, attrs)
+      {:ok, geome} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> PoliticalEntities.create_geome()
+
+      geome
+    end
+
+    test "list_geomes/0 returns all geomes" do
+      geome = geome_fixture()
+      assert PoliticalEntities.list_geomes() == [geome]
+    end
+
+    test "get_geome!/1 returns the geome with given id" do
+      geome = geome_fixture()
+      assert PoliticalEntities.get_geome!(geome.id) == geome
+    end
+
+    test "create_geome/1 with valid data creates a geome" do
+      area = insert(:area)
+      attrs = Map.merge(%{area_id: area.id}, @valid_attrs)
+      assert {:ok, %Geome{} = geome} = PoliticalEntities.create_geome(attrs)
+    end
+
+    test "create_geome/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = PoliticalEntities.create_geome(@invalid_attrs)
+    end
+
+    test "update_geome/2 with valid data updates the geome" do
+      geome = geome_fixture()
+      assert {:ok, geome} = PoliticalEntities.update_geome(geome, @update_attrs)
+      assert %Geome{} = geome
+    end
+
+    test "update_geome/2 with invalid data returns error changeset" do
+      geome = geome_fixture()
+      assert {:error, %Ecto.Changeset{}} = PoliticalEntities.update_geome(geome, @invalid_attrs)
+      assert geome == PoliticalEntities.get_geome!(geome.id)
+    end
+
+    test "delete_geome/1 deletes the geome" do
+      geome = geome_fixture()
+      assert {:ok, %Geome{}} = PoliticalEntities.delete_geome(geome)
+      assert_raise Ecto.NoResultsError, fn -> PoliticalEntities.get_geome!(geome.id) end
+    end
+
+    test "change_geome/1 returns a geome changeset" do
+      geome = geome_fixture()
+      assert %Ecto.Changeset{} = PoliticalEntities.change_geome(geome)
     end
   end
 end
