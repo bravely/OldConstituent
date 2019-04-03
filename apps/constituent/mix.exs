@@ -39,7 +39,7 @@ defmodule Constituent.Mixfile do
       # Postgres Adapter
       {:postgrex, ">= 0.0.0"},
       # DB Layer
-      {:ecto, "~> 2.1"},
+      {:ecto_sql, "~> 3.0"},
       # Password Hashing
       {:comeonin, "~> 4.0"},
       # Better Password Hashing
@@ -52,13 +52,13 @@ defmodule Constituent.Mixfile do
       # Shapefile Handler
       {:exshape, "~> 2.0.10"},
       # PostGIS Functions
-      {:geo, "~> 2.0"},
+      {:geo, "~> 3.1"},
       # PostGIS Adapter
-      {:geo_postgis, "~> 1.0"},
+      {:geo_postgis, "~> 3.1"},
       # .shp read and conversion
       {:shape_shift, path: "/Users/pepyri/dev/shape_shift"},
       {:mock, "~> 0.3"},
-      {:ex_machina, "~> 2.1"},
+      {:ex_machina, "~> 2.3"},
       {:faker, "~> 0.9"},
       {:httpoison, "~> 1.0", override: true},
       {:neuron, "~> 1.1"}

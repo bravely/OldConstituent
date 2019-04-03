@@ -5,7 +5,7 @@ defmodule ConstituentWeb.UserSocket do
   # channel "room:*", ConstituentWeb.RoomChannel
 
   ## Transports
-  transport :websocket, Phoenix.Transports.WebSocket
+  # transport :websocket, Phoenix.Transports.WebSocket # Removed in Phoenix 1.4 update
   # transport :longpoll, Phoenix.Transports.LongPoll
 
   # Socket params are passed from the client and can

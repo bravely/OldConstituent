@@ -1,5 +1,5 @@
 defmodule Constituent.Repo do
-  use Ecto.Repo, otp_app: :constituent
+  use Ecto.Repo, otp_app: :constituent, adapter: Ecto.Adapters.Postgres
 
   @doc """
   Dynamically loads the repository url from the

@@ -9,7 +9,7 @@ defmodule Constituent.PoliticalEntities.Geome do
 
   schema "geomes" do
     belongs_to :area, Area
-    field :boundaries, Geo.MultiPolygon
+    field :boundaries, Geo.PostGIS.Geometry
 
     timestamps()
   end

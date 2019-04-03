@@ -1,7 +1,9 @@
 defmodule ConstituentWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :constituent_web
 
-  socket "/socket", ConstituentWeb.UserSocket
+  socket "/socket", ConstituentWeb.UserSocket,
+    websocket: true,
+    longpoll: true # TODO: See what options there are
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -25,7 +27,7 @@ defmodule ConstituentWeb.Endpoint do
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
-    json_decoder: Poison
+    json_decoder: Jason
 
   plug Plug.MethodOverride
   plug Plug.Head
