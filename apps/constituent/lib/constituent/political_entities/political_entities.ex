@@ -288,6 +288,12 @@ defmodule Constituent.PoliticalEntities do
     |> Repo.insert()
   end
 
+  def create_us_state_area(census_attrs) do
+    census_attrs
+    |> Area.intake_census_state()
+    |> create_area()
+  end
+
   @doc """
   Updates a area.
 

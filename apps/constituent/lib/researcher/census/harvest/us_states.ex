@@ -1,7 +1,7 @@
 defmodule Researcher.Census.Harvest.UsStates do
   alias Constituent.PoliticalEntities
 
-  def harvest_us_states(path) do
+  def run(path) do
     [{_name, _proj, stream}] = ShapeShift.from_zip(path, srid: 4269)
 
     stream

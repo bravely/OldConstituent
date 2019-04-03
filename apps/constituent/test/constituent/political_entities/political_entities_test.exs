@@ -224,6 +224,42 @@ defmodule Constituent.PoliticalEntitiesTest do
       area = area_fixture()
       assert PoliticalEntities.find_area_by_name(area.name) == area
     end
+
+    @tag :skip
+    test "create_us_state_area/1 with valid data creates a us state area and geome" do
+      census_attrs = %{
+        attributes: %{
+          "NAME" => "Idaho",
+          "STUSPS" => "ID",
+          "STATEFP" => 16,
+          "REGION" => "4 ",
+          "DIVISION" => "8 "
+        },
+        geometry: %Geo.MultiPolygon{srid: 4269, coordinates: [[
+          [
+            {-73.51808, 41.666723},
+            {-73.51807099999999, 41.666782},
+            {-73.518064, 41.666843},
+            {-73.518011, 41.667572},
+            {-73.51783, 41.67012},
+            {-73.51777, 41.67097},
+            {-73.51808, 41.666723}
+          ]
+        ]]}
+      }
+
+      {:ok, %Area{} = area} = PoliticalEntities.create_us_state_area(census_attrs)
+      assert area.name == "Idaho"
+      assert area.identifier == "ID"
+      assert area.classification == "US State"
+      assert area.codes == %{
+        "USPS" => "ID",
+        "FIPS" => 16,
+        "region" => 4,
+        "division" => 8
+      }
+      assert area.geome.boundaries == census_attrs.geometry
+    end
   end
 
   describe "geomes" do
