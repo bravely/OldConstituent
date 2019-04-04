@@ -37,9 +37,9 @@ defmodule Constituent.Mixfile do
   defp deps do
     [
       # Postgres Adapter
-      {:postgrex, ">= 0.0.0"},
+      {:postgrex, "~> 0.14"},
       # DB Layer
-      {:ecto_sql, "~> 3.0"},
+      {:ecto_sql, "~> 3.1"},
       # Password Hashing
       {:comeonin, "~> 4.0"},
       # Better Password Hashing

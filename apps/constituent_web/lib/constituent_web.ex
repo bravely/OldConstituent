@@ -21,7 +21,7 @@ defmodule ConstituentWeb do
     quote do
       use Phoenix.Controller, namespace: ConstituentWeb
       import Plug.Conn
-      import ConstituentWeb.Router.Helpers
+      alias ConstituentWeb.Router.Helpers, as: Routes
       import ConstituentWeb.Gettext
     end
   end
@@ -37,7 +37,7 @@ defmodule ConstituentWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import ConstituentWeb.Router.Helpers
+      alias ConstituentWeb.Router.Helpers, as: Routes
       import ConstituentWeb.ErrorHelpers
       import ConstituentWeb.Gettext
     end
