@@ -1,14 +1,18 @@
 defmodule Constituent.Orgs.Membership do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Constituent.Orgs.Membership
-
+  alias Constituent.{
+    Orgs.Membership,
+    Orgs.Organization,
+    People.Person
+  }
 
   schema "memberships" do
     field :label, :string
     field :role, :string
-    field :organization_id, :id
-    field :area_id, :id
+
+    belongs_to :organization, Organization
+    belongs_to :person, Person
 
     timestamps()
   end

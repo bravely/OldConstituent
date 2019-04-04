@@ -1,7 +1,10 @@
 defmodule Constituent.People.Person do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Constituent.People.Person
+  alias Constituent.{
+    People.Person,
+    Orgs.Membership
+  }
 
 
   schema "persons" do
@@ -10,6 +13,9 @@ defmodule Constituent.People.Person do
     field :name, :string
     field :national_identity, :string
     field :short_biography, :string
+
+    has_many :memberships, Membership
+    has_many :organizations, through: [:memberships, :organization]
 
     timestamps()
   end

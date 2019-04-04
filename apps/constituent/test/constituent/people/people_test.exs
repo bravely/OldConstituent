@@ -32,7 +32,7 @@ defmodule Constituent.PeopleTest do
     test "create_person/1 with valid data creates a person" do
       assert {:ok, %Person{} = person} = People.create_person(@valid_attrs)
       assert person.biography == "some biography"
-      assert person.date_of_birth == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
+      assert person.date_of_birth == DateTime.from_naive!(~N[2010-04-17 14:00:00Z], "Etc/UTC")
       assert person.name == "some name"
       assert person.national_identity == "some national_identity"
       assert person.short_biography == "some short_biography"
@@ -47,7 +47,7 @@ defmodule Constituent.PeopleTest do
       assert {:ok, person} = People.update_person(person, @update_attrs)
       assert %Person{} = person
       assert person.biography == "some updated biography"
-      assert person.date_of_birth == DateTime.from_naive!(~N[2011-05-18 15:01:01.000000Z], "Etc/UTC")
+      assert person.date_of_birth == DateTime.from_naive!(~N[2011-05-18 15:01:01Z], "Etc/UTC")
       assert person.name == "some updated name"
       assert person.national_identity == "some updated national_identity"
       assert person.short_biography == "some updated short_biography"

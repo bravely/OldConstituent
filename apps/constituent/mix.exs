@@ -47,10 +47,10 @@ defmodule Constituent.Mixfile do
       # Easier Downloads
       {:download,
        git: "git://github.com/bravely/download.git", branch: "fix-process-communication"},
-      # Easy parallel pipelines
-      {:flow, "~> 0.12"},
       # Shapefile Handler
       {:exshape, "~> 2.0.10"},
+      # Easy parallel pipelines
+      {:flow, "~> 0.12"},
       # PostGIS Functions
       {:geo, "~> 3.1"},
       # PostGIS Adapter
@@ -61,7 +61,8 @@ defmodule Constituent.Mixfile do
       {:ex_machina, "~> 2.3"},
       {:faker, "~> 0.9"},
       {:httpoison, "~> 1.0", override: true},
-      {:neuron, "~> 1.1"}
+      {:neuron, "~> 1.1"},
+      {:jason, "~> 1.1"}
     ]
   end
 
